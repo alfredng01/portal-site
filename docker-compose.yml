@@ -1,0 +1,18 @@
+services:
+  home-portal:
+    build:
+      # Folder containing the source code and Dockerfile, e.g. /mnt/user/appdata/home-portal-src
+      context: ${APP_PATH:-.}
+      dockerfile: Dockerfile
+    container_name: home-portal
+    restart: unless-stopped
+    # Run as Unraid's default nobody:users so files in appdata have normal ownership.
+    # Override with PUID/PGID in a .env file if needed.
+    user: "${PUID:-99}:${PGID:-100}"
+    ports:
+      - "${HOST_PORT:-8080}:3000"
+    environment:
+      - TZ=${TZ:-Etc/UTC}
+    volumes:
+      # On Unraid, point this at appdata, e.g. /mnt/user/appdata/home-portal:/app/data
+      - ${DATA_PATH:-./data}:/app/data
